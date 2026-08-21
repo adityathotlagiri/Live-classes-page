@@ -53,25 +53,38 @@ export function useWhiteboard(canvasRef: React.RefObject<HTMLCanvasElement | nul
     fullRedraw();
   }, [fullRedraw]);
 
-  const getPoint = (e: React.MouseEvent<HTMLCanvasElement>): Point => {
+    const getPoint = (
+    e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>
+  ): Point => {
     const canvas = canvasRef.current!;
     const rect = canvas.getBoundingClientRect();
     const scaleX = canvas.width / rect.width;
     const scaleY = canvas.height / rect.height;
+
+    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+
     return {
-      x: (e.clientX - rect.left) * scaleX,
-      y: (e.clientY - rect.top) * scaleY,
+      x: (clientX - rect.left) * scaleX,
+      y: (clientY - rect.top) * scaleY,
     };
   };
 
-  const startDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
+  const startDrawing = (
+    e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>
+  ) => {
+    if ('touches' in e) e.preventDefault();
     isDrawing.current = true;
     currentPoints.current = [getPoint(e)];
     setRedoStack([]);
   };
 
-  const draw = (e: React.MouseEvent<HTMLCanvasElement>) => {
+  const draw = (
+    e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>
+  ) => {
     if (!isDrawing.current) return;
+    if ('touches' in e) e.preventDefault();
+
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext('2d');
     if (!canvas || !ctx) return;
@@ -80,7 +93,6 @@ export function useWhiteboard(canvasRef: React.RefObject<HTMLCanvasElement | nul
     const prevPoint = currentPoints.current[currentPoints.current.length - 1];
     currentPoints.current.push(point);
 
-    // Draw only the new segment directly — no React state, no full redraw
     ctx.beginPath();
     ctx.strokeStyle = toolRef.current === 'eraser' ? '#ffffff' : colorRef.current;
     ctx.lineWidth = toolRef.current === 'eraser' ? sizeRef.current * 3 : sizeRef.current;
@@ -104,7 +116,6 @@ export function useWhiteboard(canvasRef: React.RefObject<HTMLCanvasElement | nul
     isDrawing.current = false;
     currentPoints.current = [];
   };
-
   const undo = useCallback(() => {
     setStrokes((prev) => {
       if (prev.length === 0) return prev;

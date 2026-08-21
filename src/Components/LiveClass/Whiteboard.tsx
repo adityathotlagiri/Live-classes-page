@@ -156,6 +156,9 @@ export default function Whiteboard({ onClose }: WhiteboardProps) {
           onMouseMove={draw}
           onMouseUp={stopDrawing}
           onMouseLeave={stopDrawing}
+          onTouchStart={startDrawing}
+          onTouchMove={draw}
+          onTouchEnd={stopDrawing}
           className="h-full w-full cursor-crosshair touch-none"
         />
       </div>

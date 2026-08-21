@@ -75,7 +75,7 @@ export default function VideoGrid({ participants }: VideoGridProps) {
       {/* Content column: grid pinned to top, dots pinned to bottom — same position on every page */}
       <div className="mx-auto flex h-full w-full max-w-4xl flex-col">
         <div className="flex-1 overflow-hidden">
-          <div className={`grid h-full w-full ${gridClasses} auto-rows-fr gap-2 sm:gap-3`}>
+          <div className={`grid h-fit w-full ${gridClasses} auto-rows-fr gap-2 sm:gap-3`}>
             {pageParticipants.map((p) => (
               <div key={p.id} className="aspect-video">
                 <VideoTile participant={p} onPin={() => setPinnedId(p.id)} fill />
