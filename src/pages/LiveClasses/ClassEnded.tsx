@@ -1,21 +1,26 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { CheckCircle2, Clock, Users, Video, ArrowRight } from 'lucide-react';
-import { formatTimer } from '@/utils/liveClassUtils';
+import { CheckCircle2, Sparkles, ArrowRight } from 'lucide-react';
+import ClassSummary from '@/Components/LiveClass/ClassSummary';
 
 interface ClassEndedState {
+  classId?: string;
   classTitle: string;
   durationSeconds: number;
   participantCount: number;
   hasRecording: boolean;
+  teacherName?: string;
+  attendancePercent?: number;
+  pollParticipationPercent?: number;
+  questionsAsked?: number;
+  engagementLevel?: 'Low' | 'Moderate' | 'High';
 }
-
 export default function ClassEnded() {
   const navigate = useNavigate();
   const location = useLocation();
   const state = location.state as ClassEndedState | undefined;
 
-  // Fallback in case someone lands here directly without state
   const data: ClassEndedState = state ?? {
+    classId: undefined,
     classTitle: 'Live Class',
     durationSeconds: 0,
     participantCount: 0,
@@ -23,50 +28,72 @@ export default function ClassEnded() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-950 px-4">
-      <div className="w-full max-w-md animate-fade-in-up rounded-3xl border border-slate-800 bg-slate-900 p-8 text-center shadow-2xl">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#238B45]/15">
-          <CheckCircle2 className="h-8 w-8 text-[#42CE70]" />
-        </div>
+    <div className="relative min-h-screen overflow-hidden bg-slate-950">
+      {/* Decorative background — same language as your Live Classes hero */}
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        <div className="absolute -left-20 -top-20 h-96 w-96 animate-float-slow rounded-full bg-[#42CE70]/10 blur-3xl" />
+        <div className="absolute -right-24 top-10 h-80 w-80 animate-float rounded-full bg-[#238B45]/10 blur-3xl" />
+        <div
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage:
+              'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)',
+            backgroundSize: '48px 48px',
+          }}
+        />
+      </div>
 
-        <h1 className="mt-5 text-xl font-bold text-white">Class Ended</h1>
-        <p className="mt-1.5 text-sm text-slate-400">The live class has ended.</p>
-
-        <div className="mt-6 rounded-2xl bg-slate-800/60 p-4 text-left">
-          <p className="mb-3 text-sm font-semibold text-white">{data.classTitle}</p>
-          <div className="space-y-2.5">
-            <div className="flex items-center gap-2.5 text-sm text-slate-300">
-              <Clock className="h-4 w-4 text-slate-500" />
-              Duration: {formatTimer(data.durationSeconds)}
-            </div>
-            <div className="flex items-center gap-2.5 text-sm text-slate-300">
-              <Users className="h-4 w-4 text-slate-500" />
-              Participants: {data.participantCount}
-            </div>
-            <div className="flex items-center gap-2.5 text-sm text-slate-300">
-              <Video className="h-4 w-4 text-slate-500" />
-              Recording: {data.hasRecording ? 'Available' : 'Not recorded'}
-            </div>
+      <div className="mx-auto flex min-h-screen max-w-2xl flex-col items-center justify-center px-4 py-12">
+        {/* Success badge */}
+        <div className="flex animate-fade-in-up flex-col items-center text-center">
+          <div className="relative flex h-16 w-16 items-center justify-center rounded-full bg-[#238B45]/15">
+            <div className="absolute inset-0 animate-ping rounded-full bg-[#238B45]/20" />
+            <CheckCircle2 className="relative h-8 w-8 text-[#42CE70]" />
           </div>
+          <h1 className="mt-4 text-2xl font-bold text-white sm:text-3xl">Class Ended</h1>
+          <p className="mt-1 flex items-center gap-1.5 text-sm text-slate-400">
+            <Sparkles className="h-3.5 w-3.5 text-[#42CE70]" />
+            Great session — here's how it went
+          </p>
         </div>
 
-        <div className="mt-6 flex flex-col gap-2.5 sm:flex-row">
-          {data.hasRecording && (
-            <button
-              onClick={() => navigate('/recordings')}
-              className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-slate-700 py-2.5 text-sm font-medium text-slate-200 transition-colors hover:bg-slate-800"
-            >
-              View Recording
-            </button>
-          )}
-          <button
-            onClick={() => navigate('/live-classes')}
-            className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-[#238B45] py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#036724] active:bg-[#42CE70]"
-          >
-            Back to Classes
-            <ArrowRight className="h-4 w-4" />
-          </button>
+        {/* Summary card */}
+        <div className="mt-8 w-full animate-fade-in-up" style={{ animationDelay: '100ms' }}>
+          <ClassSummary
+            classTitle={data.classTitle}
+            teacherName={data.teacherName ?? 'Teacher'}
+            date={new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
+            durationSeconds={data.durationSeconds}
+            participantCount={data.participantCount}
+            attendancePercent={data.attendancePercent ?? 0}
+            pollParticipationPercent={data.pollParticipationPercent ?? 0}
+            questionsAsked={data.questionsAsked ?? 0}
+            engagementLevel={data.engagementLevel ?? 'Moderate'}
+            hasRecording={data.hasRecording}
+            onViewAttendance={() =>
+              data.classId ? navigate(`/live-classes/${data.classId}/review?tab=attendance`) : navigate('/live-classes')
+            }
+            onViewPollResults={() =>
+              data.classId ? navigate(`/live-classes/${data.classId}/review?tab=polls`) : navigate('/live-classes')
+            }
+            onViewQuestions={() =>
+              data.classId ? navigate(`/live-classes/${data.classId}/review?tab=questions`) : navigate('/live-classes')
+            }
+            onViewRecording={() => navigate('/recordings')}
+            onViewAnalytics={() =>
+              data.classId ? navigate(`/live-classes/${data.classId}/analytics`) : navigate('/live-classes')
+            }
+          />
         </div>
+
+        {/* Primary CTA */}
+        <button
+          onClick={() => navigate('/live-classes')}
+          className="mt-6 flex w-full max-w-xs items-center justify-center gap-2 rounded-xl bg-[#238B45] py-3.5 text-sm font-semibold text-white transition-all duration-200 hover:bg-[#036724] active:scale-[0.98] active:bg-[#42CE70] sm:w-auto sm:px-10"
+        >
+          Back to Classes
+          <ArrowRight className="h-4 w-4" />
+        </button>
       </div>
     </div>
   );

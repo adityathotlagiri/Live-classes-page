@@ -6,6 +6,8 @@ import LiveClassRoom from './pages/LiveClasses/LiveClassRoom'
 import ClassEnded from './pages/LiveClasses/ClassEnded'
 import Recordings from './pages/LiveClasses/Recordings'
 import JoinClass from './Components/LiveClass/JoinClass'
+import ClassAnalytics from './pages/LiveClasses/ClassAnalytics'
+import PostClassReview from './pages/LiveClasses/PostClassReview'
 
 function App() {
   return (
@@ -18,6 +20,8 @@ function App() {
         <Route path="/class-ended" element={<ClassEnded />} />
         <Route path="/recordings" element={<Recordings />} />
         <Route path="/live-classes/:classId/join" element={<JoinClass />} />
+        <Route path="/live-classes/:classId/analytics" element={<ClassAnalytics />} />
+        <Route path="/live-classes/:classId/review" element={<PostClassReview />} />
       </Routes>
     </BrowserRouter>
   )

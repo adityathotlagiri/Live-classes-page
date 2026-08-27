@@ -47,6 +47,17 @@ interface ClassroomControlsProps {
   participantsOpen: boolean;
   whiteboardOpen: boolean;
   unreadChatCount: number;
+  engagementOpen: boolean;
+  unacknowledgedCount: number;
+  pollsOpen: boolean;
+    attendanceOpen: boolean;
+    announcementsOpen:boolean;
+  activityOpen:boolean;
+  onToggleActivity:()=>void;
+    onToggleAnnouncements:()=> void;
+  onToggleAttendance: () => void;
+  onTogglePolls: () => void;
+  onToggleEngagement: () => void;
   onToggleMic: () => void;
   onToggleCamera: () => void;
   onToggleScreenShare: () => void;
@@ -57,6 +68,7 @@ interface ClassroomControlsProps {
   onReact: (emoji: string) => void;
   onLeave: () => void;
   onEndClass: () => void;
+
 }
 
 export default function ClassroomControls({
@@ -69,6 +81,17 @@ export default function ClassroomControls({
   participantsOpen,
   whiteboardOpen,
   unreadChatCount,
+  engagementOpen,
+  unacknowledgedCount,
+  pollsOpen,
+  attendanceOpen,
+  announcementsOpen,
+  activityOpen,
+  onToggleActivity,
+  onToggleAnnouncements,
+  onToggleAttendance,
+  onTogglePolls,
+  onToggleEngagement,
   onToggleMic,
   onToggleCamera,
   onToggleScreenShare,
@@ -109,10 +132,21 @@ export default function ClassroomControls({
         isScreenSharing={isScreenSharing}
         whiteboardOpen={whiteboardOpen}
         participantsOpen={participantsOpen}
+        engagementOpen={engagementOpen}
+        pollsOpen={pollsOpen}
+        attendanceOpen={attendanceOpen}
         isRecording={isRecording}
+        unacknowledgedCount={unacknowledgedCount}
+        announcementsOpen={announcementsOpen}
+        activityOpen={activityOpen}
+        onToggleActivity={onToggleActivity}
+        onToggleAnnouncements={onToggleAnnouncements}
         onToggleScreenShare={onToggleScreenShare}
         onToggleWhiteboard={onToggleWhiteboard}
         onToggleParticipants={onToggleParticipants}
+        onToggleEngagement={onToggleEngagement}
+        onTogglePolls={onTogglePolls}
+        onToggleAttendance={onToggleAttendance}
         onToggleRecording={onToggleRecording}
         onReact={onReact}
       />

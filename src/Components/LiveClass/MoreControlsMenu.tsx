@@ -8,16 +8,30 @@ import {
   Circle,
   Square,
 } from 'lucide-react';
+import { Hand, Megaphone, Activity } from 'lucide-react';
+import { ClipboardList } from 'lucide-react';
+import { ClipboardCheck } from 'lucide-react';
 
 interface MoreControlsMenuProps {
   isTeacher: boolean;
   isScreenSharing: boolean;
   whiteboardOpen: boolean;
   participantsOpen: boolean;
+  engagementOpen: boolean;
+  pollsOpen: boolean;
+  announcementsOpen:boolean;
+  attendanceOpen: boolean;
   isRecording: boolean;
+  unacknowledgedCount: number;
+  activityOpen:boolean;
+  onToggleActivity:()=>void;
+  onToggleAnnouncements:()=> void;
   onToggleScreenShare: () => void;
   onToggleWhiteboard: () => void;
   onToggleParticipants: () => void;
+  onToggleEngagement: () => void;
+  onTogglePolls: () => void;
+  onToggleAttendance: () => void;
   onToggleRecording: () => void;
   onReact: (emoji: string) => void;
 }
@@ -29,16 +43,26 @@ export default function MoreControlsMenu({
   isScreenSharing,
   whiteboardOpen,
   participantsOpen,
+  engagementOpen,
   isRecording,
+  unacknowledgedCount,
+  pollsOpen,
+  attendanceOpen,
+  announcementsOpen,
+  activityOpen,
+  onToggleActivity,
+  onToggleAnnouncements,
+  onToggleAttendance,
+  onTogglePolls,
   onToggleScreenShare,
   onToggleWhiteboard,
   onToggleParticipants,
+  onToggleEngagement,
   onToggleRecording,
   onReact,
 }: MoreControlsMenuProps) {
   const [open, setOpen] = useState(false);
   const [showReactions, setShowReactions] = useState(false);
-
   const close = () => {
     setOpen(false);
     setShowReactions(false);
@@ -61,6 +85,17 @@ export default function MoreControlsMenu({
                 }}
               />
             )}
+
+              <MenuItem
+                icon={<ClipboardCheck className="h-4 w-4" />}
+                label="Attendance"
+                active={attendanceOpen}
+                onClick={() => {
+                  onToggleAttendance();
+                  close();
+                }}
+              />
+
             <MenuItem
               icon={<PenSquare className="h-4 w-4" />}
               label="Whiteboard"
@@ -79,7 +114,42 @@ export default function MoreControlsMenu({
                 close();
               }}
             />
-
+            <MenuItem
+              icon={<Hand className="h-4 w-4" />}
+              label={isTeacher && unacknowledgedCount > 0 ? `Engagement (${unacknowledgedCount})` : 'Engagement'}
+              active={engagementOpen}
+              onClick={() => {
+                onToggleEngagement();
+                close();
+              }}
+            />
+            <MenuItem
+              icon={<Megaphone className="h-4 w-4" />}
+              label="Announcements"
+              active={announcementsOpen}
+              onClick={() => {
+                onToggleAnnouncements();
+                close();
+              }}
+            />
+            <MenuItem
+              icon={<Activity className="h-4 w-4" />}
+              label="Activity"
+              active={activityOpen}
+              onClick={() => {
+                onToggleActivity();
+                close();
+              }}
+            />
+            <MenuItem
+              icon={<ClipboardList className="h-4 w-4" />}
+              label="Polls"
+              active={pollsOpen}
+              onClick={() => {
+                onTogglePolls();
+                close();
+              }}
+            />
             {!showReactions ? (
               <MenuItem
                 icon={<SmilePlus className="h-4 w-4" />}
